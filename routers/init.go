@@ -10,4 +10,7 @@ func Init(r *gin.Engine) {
 
 	test := v1.Group("/test")
 	test.GET("/ping", controller.Pong)
+
+	user := v1.Group("/user")
+	user.POST("/create", controller.CreateUser)
 }
