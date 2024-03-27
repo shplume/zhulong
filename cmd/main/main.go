@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
+	_ "github.com/shplume/zhulong/logger"
 	"github.com/shplume/zhulong/routers"
 )
 

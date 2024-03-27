@@ -1,7 +1,7 @@
 package controller
 
 import (
-	"fmt"
+	"log/slog"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +16,8 @@ func CreateUser(c *gin.Context) {
 	}
 
 	if err := c.BindJSON(&data); err != nil {
+		slog.Error(err.Error())
+
 		c.JSON(http.StatusBadRequest, &gin.H{
 			"message": "Invalid Parameter",
 		})
@@ -24,7 +26,7 @@ func CreateUser(c *gin.Context) {
 	}
 
 	if err := service.CreateUser(data.Account, data.Password, data.Role); err != nil {
-		fmt.Println(err.Error())
+		slog.Error(err.Error())
 
 		c.JSON(http.StatusInternalServerError, &gin.H{
 			"message": err,
