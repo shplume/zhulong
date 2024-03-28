@@ -8,6 +8,7 @@ require (
 	entgo.io/ent v0.13.1
 	github.com/gin-gonic/gin v1.9.1
 	github.com/go-sql-driver/mysql v1.8.0
+	golang.org/x/crypto v0.9.0
 )
 
 require (
@@ -39,7 +40,6 @@ require (
 	github.com/ugorji/go/codec v1.2.11 // indirect
 	github.com/zclconf/go-cty v1.8.0 // indirect
 	golang.org/x/arch v0.3.0 // indirect
-	golang.org/x/crypto v0.9.0 // indirect
 	golang.org/x/mod v0.15.0 // indirect
 	golang.org/x/net v0.10.0 // indirect
 	golang.org/x/sys v0.17.0 // indirect

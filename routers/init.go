@@ -13,4 +13,5 @@ func Init(r *gin.Engine) {
 
 	user := v1.Group("/user")
 	user.POST("/create", controller.CreateUser)
+	user.POST("/login", controller.UserLogin)
 }
