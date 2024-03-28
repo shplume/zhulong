@@ -29,7 +29,7 @@ func New() *slog.Logger {
 	logFilePath := path.Join(logDir, logFileName)
 
 	createDir(logDir)
-	file, err := os.OpenFile(logFilePath, os.O_RDWR|os.O_CREATE, 0666)
+	file, err := os.OpenFile(logFilePath, os.O_APPEND|os.O_WRONLY|os.O_CREATE, 0666)
 	if err != nil {
 		panic(loggerTag + err.Error())
 	}
