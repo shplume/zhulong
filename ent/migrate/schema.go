@@ -8,6 +8,116 @@ import (
 )
 
 var (
+	// FilesColumns holds the columns for the "files" table.
+	FilesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "type", Type: field.TypeInt},
+		{Name: "url", Type: field.TypeString, Unique: true},
+		{Name: "file_user_id", Type: field.TypeInt, Nullable: true},
+	}
+	// FilesTable holds the schema information for the "files" table.
+	FilesTable = &schema.Table{
+		Name:       "files",
+		Columns:    FilesColumns,
+		PrimaryKey: []*schema.Column{FilesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "files_users_user_id",
+				Columns:    []*schema.Column{FilesColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// ReviewsColumns holds the columns for the "reviews" table.
+	ReviewsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "status", Type: field.TypeInt},
+		{Name: "remark", Type: field.TypeString},
+		{Name: "review_thesis", Type: field.TypeInt},
+		{Name: "review_student_id", Type: field.TypeInt},
+		{Name: "review_teacher_id", Type: field.TypeInt, Nullable: true},
+		{Name: "review_book_id", Type: field.TypeInt, Nullable: true},
+	}
+	// ReviewsTable holds the schema information for the "reviews" table.
+	ReviewsTable = &schema.Table{
+		Name:       "reviews",
+		Columns:    ReviewsColumns,
+		PrimaryKey: []*schema.Column{ReviewsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "reviews_files_thesis",
+				Columns:    []*schema.Column{ReviewsColumns[3]},
+				RefColumns: []*schema.Column{FilesColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "reviews_students_student_id",
+				Columns:    []*schema.Column{ReviewsColumns[4]},
+				RefColumns: []*schema.Column{StudentsColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+			{
+				Symbol:     "reviews_teachers_teacher_id",
+				Columns:    []*schema.Column{ReviewsColumns[5]},
+				RefColumns: []*schema.Column{TeachersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "reviews_files_book_id",
+				Columns:    []*schema.Column{ReviewsColumns[6]},
+				RefColumns: []*schema.Column{FilesColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+		},
+	}
+	// StudentsColumns holds the columns for the "students" table.
+	StudentsColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "college", Type: field.TypeString},
+		{Name: "subject", Type: field.TypeString},
+		{Name: "class", Type: field.TypeString},
+		{Name: "identity", Type: field.TypeString, Unique: true},
+		{Name: "student_user_id", Type: field.TypeInt},
+	}
+	// StudentsTable holds the schema information for the "students" table.
+	StudentsTable = &schema.Table{
+		Name:       "students",
+		Columns:    StudentsColumns,
+		PrimaryKey: []*schema.Column{StudentsColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "students_users_user_id",
+				Columns:    []*schema.Column{StudentsColumns[6]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// TeachersColumns holds the columns for the "teachers" table.
+	TeachersColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "name", Type: field.TypeString},
+		{Name: "college", Type: field.TypeString},
+		{Name: "identity", Type: field.TypeString, Unique: true},
+		{Name: "teacher_user_id", Type: field.TypeInt},
+	}
+	// TeachersTable holds the schema information for the "teachers" table.
+	TeachersTable = &schema.Table{
+		Name:       "teachers",
+		Columns:    TeachersColumns,
+		PrimaryKey: []*schema.Column{TeachersColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "teachers_users_user_id",
+				Columns:    []*schema.Column{TeachersColumns[4]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.NoAction,
+			},
+		},
+	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
@@ -23,9 +133,20 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
+		FilesTable,
+		ReviewsTable,
+		StudentsTable,
+		TeachersTable,
 		UsersTable,
 	}
 )
 
 func init() {
+	FilesTable.ForeignKeys[0].RefTable = UsersTable
+	ReviewsTable.ForeignKeys[0].RefTable = FilesTable
+	ReviewsTable.ForeignKeys[1].RefTable = StudentsTable
+	ReviewsTable.ForeignKeys[2].RefTable = TeachersTable
+	ReviewsTable.ForeignKeys[3].RefTable = FilesTable
+	StudentsTable.ForeignKeys[0].RefTable = UsersTable
+	TeachersTable.ForeignKeys[0].RefTable = UsersTable
 }

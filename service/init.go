@@ -11,15 +11,6 @@ import (
 
 var client *ent.Client
 
-const (
-	userName = "root"
-	password = "Zbk123456"
-	host     = "127.0.0.1"
-	port     = "3306"
-	Database = "files"
-	charset  = "utf8mb4"
-)
-
 func init() {
 	var err error
 	client, err = ent.Open("mysql", "root:123456@tcp(10.0.1.253:3306)/zhulong?parseTime=True")
