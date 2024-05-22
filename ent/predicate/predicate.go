@@ -6,17 +6,20 @@ import (
 	"entgo.io/ent/dialect/sql"
 )
 
-// File is the predicate function for file builders.
-type File func(*sql.Selector)
+// Administrators is the predicate function for administrators builders.
+type Administrators func(*sql.Selector)
 
-// Review is the predicate function for review builders.
-type Review func(*sql.Selector)
+// Reviews is the predicate function for reviews builders.
+type Reviews func(*sql.Selector)
 
-// Student is the predicate function for student builders.
-type Student func(*sql.Selector)
+// Students is the predicate function for students builders.
+type Students func(*sql.Selector)
 
-// Teacher is the predicate function for teacher builders.
-type Teacher func(*sql.Selector)
+// Teachers is the predicate function for teachers builders.
+type Teachers func(*sql.Selector)
+
+// Thesis is the predicate function for thesis builders.
+type Thesis func(*sql.Selector)
 
 // User is the predicate function for user builders.
 type User func(*sql.Selector)

@@ -8,37 +8,39 @@ import (
 )
 
 var (
-	// FilesColumns holds the columns for the "files" table.
-	FilesColumns = []*schema.Column{
+	// AdministratorsColumns holds the columns for the "administrators" table.
+	AdministratorsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "avatar", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
-		{Name: "type", Type: field.TypeInt},
-		{Name: "url", Type: field.TypeString, Unique: true},
-		{Name: "file_user_id", Type: field.TypeInt, Nullable: true},
+		{Name: "college", Type: field.TypeString},
+		{Name: "phone", Type: field.TypeString},
+		{Name: "number", Type: field.TypeString},
+		{Name: "user_administrators", Type: field.TypeInt, Unique: true},
 	}
-	// FilesTable holds the schema information for the "files" table.
-	FilesTable = &schema.Table{
-		Name:       "files",
-		Columns:    FilesColumns,
-		PrimaryKey: []*schema.Column{FilesColumns[0]},
+	// AdministratorsTable holds the schema information for the "administrators" table.
+	AdministratorsTable = &schema.Table{
+		Name:       "administrators",
+		Columns:    AdministratorsColumns,
+		PrimaryKey: []*schema.Column{AdministratorsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "files_users_user_id",
-				Columns:    []*schema.Column{FilesColumns[4]},
+				Symbol:     "administrators_users_administrators",
+				Columns:    []*schema.Column{AdministratorsColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
-				OnDelete:   schema.SetNull,
+				OnDelete:   schema.NoAction,
 			},
 		},
 	}
 	// ReviewsColumns holds the columns for the "reviews" table.
 	ReviewsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "status", Type: field.TypeInt},
-		{Name: "remark", Type: field.TypeString},
-		{Name: "review_thesis", Type: field.TypeInt},
-		{Name: "review_student_id", Type: field.TypeInt},
-		{Name: "review_teacher_id", Type: field.TypeInt, Nullable: true},
-		{Name: "review_book_id", Type: field.TypeInt, Nullable: true},
+		{Name: "file_name", Type: field.TypeString, Nullable: true},
+		{Name: "file_url", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "upload_time", Type: field.TypeTime, Nullable: true},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "reviews_title", Type: field.TypeString},
+		{Name: "user_reviews", Type: field.TypeInt, Nullable: true},
 	}
 	// ReviewsTable holds the schema information for the "reviews" table.
 	ReviewsTable = &schema.Table{
@@ -47,27 +49,9 @@ var (
 		PrimaryKey: []*schema.Column{ReviewsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "reviews_files_thesis",
-				Columns:    []*schema.Column{ReviewsColumns[3]},
-				RefColumns: []*schema.Column{FilesColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "reviews_students_student_id",
-				Columns:    []*schema.Column{ReviewsColumns[4]},
-				RefColumns: []*schema.Column{StudentsColumns[0]},
-				OnDelete:   schema.NoAction,
-			},
-			{
-				Symbol:     "reviews_teachers_teacher_id",
-				Columns:    []*schema.Column{ReviewsColumns[5]},
-				RefColumns: []*schema.Column{TeachersColumns[0]},
-				OnDelete:   schema.SetNull,
-			},
-			{
-				Symbol:     "reviews_files_book_id",
+				Symbol:     "reviews_users_reviews",
 				Columns:    []*schema.Column{ReviewsColumns[6]},
-				RefColumns: []*schema.Column{FilesColumns[0]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.SetNull,
 			},
 		},
@@ -75,12 +59,14 @@ var (
 	// StudentsColumns holds the columns for the "students" table.
 	StudentsColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "avatar", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "college", Type: field.TypeString},
-		{Name: "subject", Type: field.TypeString},
+		{Name: "phone", Type: field.TypeString},
+		{Name: "major", Type: field.TypeString},
 		{Name: "class", Type: field.TypeString},
-		{Name: "identity", Type: field.TypeString, Unique: true},
-		{Name: "student_user_id", Type: field.TypeInt},
+		{Name: "number", Type: field.TypeString},
+		{Name: "user_students", Type: field.TypeInt, Unique: true},
 	}
 	// StudentsTable holds the schema information for the "students" table.
 	StudentsTable = &schema.Table{
@@ -89,8 +75,8 @@ var (
 		PrimaryKey: []*schema.Column{StudentsColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "students_users_user_id",
-				Columns:    []*schema.Column{StudentsColumns[6]},
+				Symbol:     "students_users_students",
+				Columns:    []*schema.Column{StudentsColumns[8]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
 			},
@@ -99,10 +85,12 @@ var (
 	// TeachersColumns holds the columns for the "teachers" table.
 	TeachersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "avatar", Type: field.TypeString},
 		{Name: "name", Type: field.TypeString},
 		{Name: "college", Type: field.TypeString},
-		{Name: "identity", Type: field.TypeString, Unique: true},
-		{Name: "teacher_user_id", Type: field.TypeInt},
+		{Name: "phone", Type: field.TypeString},
+		{Name: "number", Type: field.TypeString},
+		{Name: "user_teachers", Type: field.TypeInt, Unique: true},
 	}
 	// TeachersTable holds the schema information for the "teachers" table.
 	TeachersTable = &schema.Table{
@@ -111,19 +99,58 @@ var (
 		PrimaryKey: []*schema.Column{TeachersColumns[0]},
 		ForeignKeys: []*schema.ForeignKey{
 			{
-				Symbol:     "teachers_users_user_id",
-				Columns:    []*schema.Column{TeachersColumns[4]},
+				Symbol:     "teachers_users_teachers",
+				Columns:    []*schema.Column{TeachersColumns[6]},
 				RefColumns: []*schema.Column{UsersColumns[0]},
 				OnDelete:   schema.NoAction,
+			},
+		},
+	}
+	// ThesesColumns holds the columns for the "theses" table.
+	ThesesColumns = []*schema.Column{
+		{Name: "id", Type: field.TypeInt, Increment: true},
+		{Name: "file_name", Type: field.TypeString, Nullable: true},
+		{Name: "file_url", Type: field.TypeString, Unique: true, Nullable: true},
+		{Name: "file_state", Type: field.TypeInt},
+		{Name: "upload_time", Type: field.TypeTime, Nullable: true},
+		{Name: "chinese_title", Type: field.TypeString},
+		{Name: "english_title", Type: field.TypeString},
+		{Name: "authors", Type: field.TypeString},
+		{Name: "teachers", Type: field.TypeString},
+		{Name: "first_advance", Type: field.TypeString},
+		{Name: "second_advance", Type: field.TypeString},
+		{Name: "third_advance", Type: field.TypeString},
+		{Name: "drawback", Type: field.TypeString},
+		{Name: "create_time", Type: field.TypeTime},
+		{Name: "thesis_examine", Type: field.TypeInt, Nullable: true},
+		{Name: "user_thesis", Type: field.TypeInt, Nullable: true},
+	}
+	// ThesesTable holds the schema information for the "theses" table.
+	ThesesTable = &schema.Table{
+		Name:       "theses",
+		Columns:    ThesesColumns,
+		PrimaryKey: []*schema.Column{ThesesColumns[0]},
+		ForeignKeys: []*schema.ForeignKey{
+			{
+				Symbol:     "theses_users_examine",
+				Columns:    []*schema.Column{ThesesColumns[14]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
+			},
+			{
+				Symbol:     "theses_users_thesis",
+				Columns:    []*schema.Column{ThesesColumns[15]},
+				RefColumns: []*schema.Column{UsersColumns[0]},
+				OnDelete:   schema.SetNull,
 			},
 		},
 	}
 	// UsersColumns holds the columns for the "users" table.
 	UsersColumns = []*schema.Column{
 		{Name: "id", Type: field.TypeInt, Increment: true},
-		{Name: "role", Type: field.TypeInt},
 		{Name: "account", Type: field.TypeString, Unique: true},
 		{Name: "password", Type: field.TypeString},
+		{Name: "role", Type: field.TypeInt},
 	}
 	// UsersTable holds the schema information for the "users" table.
 	UsersTable = &schema.Table{
@@ -133,20 +160,20 @@ var (
 	}
 	// Tables holds all the tables in the schema.
 	Tables = []*schema.Table{
-		FilesTable,
+		AdministratorsTable,
 		ReviewsTable,
 		StudentsTable,
 		TeachersTable,
+		ThesesTable,
 		UsersTable,
 	}
 )
 
 func init() {
-	FilesTable.ForeignKeys[0].RefTable = UsersTable
-	ReviewsTable.ForeignKeys[0].RefTable = FilesTable
-	ReviewsTable.ForeignKeys[1].RefTable = StudentsTable
-	ReviewsTable.ForeignKeys[2].RefTable = TeachersTable
-	ReviewsTable.ForeignKeys[3].RefTable = FilesTable
+	AdministratorsTable.ForeignKeys[0].RefTable = UsersTable
+	ReviewsTable.ForeignKeys[0].RefTable = UsersTable
 	StudentsTable.ForeignKeys[0].RefTable = UsersTable
 	TeachersTable.ForeignKeys[0].RefTable = UsersTable
+	ThesesTable.ForeignKeys[0].RefTable = UsersTable
+	ThesesTable.ForeignKeys[1].RefTable = UsersTable
 }

@@ -2,8 +2,28 @@
 
 package ent
 
+import (
+	"time"
+
+	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/schema"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
+)
+
 // The init function reads all schema descriptors with runtime code
 // (default values, validators, hooks and policies) and stitches it
 // to their package variables.
 func init() {
+	reviewsFields := schema.Reviews{}.Fields()
+	_ = reviewsFields
+	// reviewsDescCreateTime is the schema descriptor for create_time field.
+	reviewsDescCreateTime := reviewsFields[3].Descriptor()
+	// reviews.DefaultCreateTime holds the default value on creation for the create_time field.
+	reviews.DefaultCreateTime = reviewsDescCreateTime.Default.(func() time.Time)
+	thesisFields := schema.Thesis{}.Fields()
+	_ = thesisFields
+	// thesisDescCreateTime is the schema descriptor for create_time field.
+	thesisDescCreateTime := thesisFields[12].Descriptor()
+	// thesis.DefaultCreateTime holds the default value on creation for the create_time field.
+	thesis.DefaultCreateTime = thesisDescCreateTime.Default.(func() time.Time)
 }

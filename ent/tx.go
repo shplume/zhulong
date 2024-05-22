@@ -12,14 +12,16 @@ import (
 // Tx is a transactional client that is created by calling Client.Tx().
 type Tx struct {
 	config
-	// File is the client for interacting with the File builders.
-	File *FileClient
-	// Review is the client for interacting with the Review builders.
-	Review *ReviewClient
-	// Student is the client for interacting with the Student builders.
-	Student *StudentClient
-	// Teacher is the client for interacting with the Teacher builders.
-	Teacher *TeacherClient
+	// Administrators is the client for interacting with the Administrators builders.
+	Administrators *AdministratorsClient
+	// Reviews is the client for interacting with the Reviews builders.
+	Reviews *ReviewsClient
+	// Students is the client for interacting with the Students builders.
+	Students *StudentsClient
+	// Teachers is the client for interacting with the Teachers builders.
+	Teachers *TeachersClient
+	// Thesis is the client for interacting with the Thesis builders.
+	Thesis *ThesisClient
 	// User is the client for interacting with the User builders.
 	User *UserClient
 
@@ -153,10 +155,11 @@ func (tx *Tx) Client() *Client {
 }
 
 func (tx *Tx) init() {
-	tx.File = NewFileClient(tx.config)
-	tx.Review = NewReviewClient(tx.config)
-	tx.Student = NewStudentClient(tx.config)
-	tx.Teacher = NewTeacherClient(tx.config)
+	tx.Administrators = NewAdministratorsClient(tx.config)
+	tx.Reviews = NewReviewsClient(tx.config)
+	tx.Students = NewStudentsClient(tx.config)
+	tx.Teachers = NewTeachersClient(tx.config)
+	tx.Thesis = NewThesisClient(tx.config)
 	tx.User = NewUserClient(tx.config)
 }
 
@@ -167,7 +170,7 @@ func (tx *Tx) init() {
 // of them in order to commit or rollback the transaction.
 //
 // If a closed transaction is embedded in one of the generated entities, and the entity
-// applies a query, for example: File.QueryXXX(), the query will be executed
+// applies a query, for example: Administrators.QueryXXX(), the query will be executed
 // through the driver which created this transaction.
 //
 // Note that txDriver is not goroutine safe.

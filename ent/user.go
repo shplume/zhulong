@@ -8,7 +8,10 @@ import (
 
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
-	"github.com/shplume/zhulong/ent/user"
+	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // User is the model entity for the User schema.
@@ -16,13 +19,95 @@ type User struct {
 	config `json:"-"`
 	// ID of the ent.
 	ID int `json:"id,omitempty"`
-	// Role holds the value of the "role" field.
-	Role int `json:"role,omitempty"`
 	// Account holds the value of the "account" field.
 	Account string `json:"account,omitempty"`
 	// Password holds the value of the "password" field.
-	Password     string `json:"password,omitempty"`
+	Password string `json:"password,omitempty"`
+	// Role holds the value of the "role" field.
+	Role int `json:"role,omitempty"`
+	// Edges holds the relations/edges for other nodes in the graph.
+	// The values are being populated by the UserQuery when eager-loading is set.
+	Edges        UserEdges `json:"edges"`
 	selectValues sql.SelectValues
+}
+
+// UserEdges holds the relations/edges for other nodes in the graph.
+type UserEdges struct {
+	// Administrators holds the value of the administrators edge.
+	Administrators *Administrators `json:"administrators,omitempty"`
+	// Students holds the value of the students edge.
+	Students *Students `json:"students,omitempty"`
+	// Teachers holds the value of the teachers edge.
+	Teachers *Teachers `json:"teachers,omitempty"`
+	// Thesis holds the value of the thesis edge.
+	Thesis []*Thesis `json:"thesis,omitempty"`
+	// Reviews holds the value of the reviews edge.
+	Reviews []*Reviews `json:"reviews,omitempty"`
+	// ExamineThesis holds the value of the examineThesis edge.
+	ExamineThesis []*Thesis `json:"examineThesis,omitempty"`
+	// loadedTypes holds the information for reporting if a
+	// type was loaded (or requested) in eager-loading or not.
+	loadedTypes [6]bool
+}
+
+// AdministratorsOrErr returns the Administrators value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) AdministratorsOrErr() (*Administrators, error) {
+	if e.Administrators != nil {
+		return e.Administrators, nil
+	} else if e.loadedTypes[0] {
+		return nil, &NotFoundError{label: administrators.Label}
+	}
+	return nil, &NotLoadedError{edge: "administrators"}
+}
+
+// StudentsOrErr returns the Students value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) StudentsOrErr() (*Students, error) {
+	if e.Students != nil {
+		return e.Students, nil
+	} else if e.loadedTypes[1] {
+		return nil, &NotFoundError{label: students.Label}
+	}
+	return nil, &NotLoadedError{edge: "students"}
+}
+
+// TeachersOrErr returns the Teachers value or an error if the edge
+// was not loaded in eager-loading, or loaded but was not found.
+func (e UserEdges) TeachersOrErr() (*Teachers, error) {
+	if e.Teachers != nil {
+		return e.Teachers, nil
+	} else if e.loadedTypes[2] {
+		return nil, &NotFoundError{label: teachers.Label}
+	}
+	return nil, &NotLoadedError{edge: "teachers"}
+}
+
+// ThesisOrErr returns the Thesis value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ThesisOrErr() ([]*Thesis, error) {
+	if e.loadedTypes[3] {
+		return e.Thesis, nil
+	}
+	return nil, &NotLoadedError{edge: "thesis"}
+}
+
+// ReviewsOrErr returns the Reviews value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ReviewsOrErr() ([]*Reviews, error) {
+	if e.loadedTypes[4] {
+		return e.Reviews, nil
+	}
+	return nil, &NotLoadedError{edge: "reviews"}
+}
+
+// ExamineThesisOrErr returns the ExamineThesis value or an error if the edge
+// was not loaded in eager-loading.
+func (e UserEdges) ExamineThesisOrErr() ([]*Thesis, error) {
+	if e.loadedTypes[5] {
+		return e.ExamineThesis, nil
+	}
+	return nil, &NotLoadedError{edge: "examineThesis"}
 }
 
 // scanValues returns the types for scanning values from sql.Rows.
@@ -55,12 +140,6 @@ func (u *User) assignValues(columns []string, values []any) error {
 				return fmt.Errorf("unexpected type %T for field id", value)
 			}
 			u.ID = int(value.Int64)
-		case user.FieldRole:
-			if value, ok := values[i].(*sql.NullInt64); !ok {
-				return fmt.Errorf("unexpected type %T for field role", values[i])
-			} else if value.Valid {
-				u.Role = int(value.Int64)
-			}
 		case user.FieldAccount:
 			if value, ok := values[i].(*sql.NullString); !ok {
 				return fmt.Errorf("unexpected type %T for field account", values[i])
@@ -73,6 +152,12 @@ func (u *User) assignValues(columns []string, values []any) error {
 			} else if value.Valid {
 				u.Password = value.String
 			}
+		case user.FieldRole:
+			if value, ok := values[i].(*sql.NullInt64); !ok {
+				return fmt.Errorf("unexpected type %T for field role", values[i])
+			} else if value.Valid {
+				u.Role = int(value.Int64)
+			}
 		default:
 			u.selectValues.Set(columns[i], values[i])
 		}
@@ -84,6 +169,36 @@ func (u *User) assignValues(columns []string, values []any) error {
 // This includes values selected through modifiers, order, etc.
 func (u *User) Value(name string) (ent.Value, error) {
 	return u.selectValues.Get(name)
+}
+
+// QueryAdministrators queries the "administrators" edge of the User entity.
+func (u *User) QueryAdministrators() *AdministratorsQuery {
+	return NewUserClient(u.config).QueryAdministrators(u)
+}
+
+// QueryStudents queries the "students" edge of the User entity.
+func (u *User) QueryStudents() *StudentsQuery {
+	return NewUserClient(u.config).QueryStudents(u)
+}
+
+// QueryTeachers queries the "teachers" edge of the User entity.
+func (u *User) QueryTeachers() *TeachersQuery {
+	return NewUserClient(u.config).QueryTeachers(u)
+}
+
+// QueryThesis queries the "thesis" edge of the User entity.
+func (u *User) QueryThesis() *ThesisQuery {
+	return NewUserClient(u.config).QueryThesis(u)
+}
+
+// QueryReviews queries the "reviews" edge of the User entity.
+func (u *User) QueryReviews() *ReviewsQuery {
+	return NewUserClient(u.config).QueryReviews(u)
+}
+
+// QueryExamineThesis queries the "examineThesis" edge of the User entity.
+func (u *User) QueryExamineThesis() *ThesisQuery {
+	return NewUserClient(u.config).QueryExamineThesis(u)
 }
 
 // Update returns a builder for updating this User.
@@ -109,14 +224,14 @@ func (u *User) String() string {
 	var builder strings.Builder
 	builder.WriteString("User(")
 	builder.WriteString(fmt.Sprintf("id=%v, ", u.ID))
-	builder.WriteString("role=")
-	builder.WriteString(fmt.Sprintf("%v", u.Role))
-	builder.WriteString(", ")
 	builder.WriteString("account=")
 	builder.WriteString(u.Account)
 	builder.WriteString(", ")
 	builder.WriteString("password=")
 	builder.WriteString(u.Password)
+	builder.WriteString(", ")
+	builder.WriteString("role=")
+	builder.WriteString(fmt.Sprintf("%v", u.Role))
 	builder.WriteByte(')')
 	return builder.String()
 }

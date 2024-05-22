@@ -12,11 +12,12 @@ import (
 	"entgo.io/ent"
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
-	"github.com/shplume/zhulong/ent/file"
-	"github.com/shplume/zhulong/ent/review"
-	"github.com/shplume/zhulong/ent/student"
-	"github.com/shplume/zhulong/ent/teacher"
-	"github.com/shplume/zhulong/ent/user"
+	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // ent aliases to avoid import conflicts in user's code.
@@ -77,11 +78,12 @@ var (
 func checkColumn(table, column string) error {
 	initCheck.Do(func() {
 		columnCheck = sql.NewColumnCheck(map[string]func(string) bool{
-			file.Table:    file.ValidColumn,
-			review.Table:  review.ValidColumn,
-			student.Table: student.ValidColumn,
-			teacher.Table: teacher.ValidColumn,
-			user.Table:    user.ValidColumn,
+			administrators.Table: administrators.ValidColumn,
+			reviews.Table:        reviews.ValidColumn,
+			students.Table:       students.ValidColumn,
+			teachers.Table:       teachers.ValidColumn,
+			thesis.Table:         thesis.ValidColumn,
+			user.Table:           user.ValidColumn,
 		})
 	})
 	return columnCheck(table, column)

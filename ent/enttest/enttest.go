@@ -5,12 +5,12 @@ package enttest
 import (
 	"context"
 
-	"github.com/shplume/zhulong/ent"
+	"github.com/ZEQUANR/zhulong/ent"
 	// required by schema hooks.
-	_ "github.com/shplume/zhulong/ent/runtime"
+	_ "github.com/ZEQUANR/zhulong/ent/runtime"
 
 	"entgo.io/ent/dialect/sql/schema"
-	"github.com/shplume/zhulong/ent/migrate"
+	"github.com/ZEQUANR/zhulong/ent/migrate"
 )
 
 type (

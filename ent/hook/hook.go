@@ -6,55 +6,67 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/shplume/zhulong/ent"
+	"github.com/ZEQUANR/zhulong/ent"
 )
 
-// The FileFunc type is an adapter to allow the use of ordinary
-// function as File mutator.
-type FileFunc func(context.Context, *ent.FileMutation) (ent.Value, error)
+// The AdministratorsFunc type is an adapter to allow the use of ordinary
+// function as Administrators mutator.
+type AdministratorsFunc func(context.Context, *ent.AdministratorsMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f FileFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.FileMutation); ok {
+func (f AdministratorsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.AdministratorsMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.FileMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.AdministratorsMutation", m)
 }
 
-// The ReviewFunc type is an adapter to allow the use of ordinary
-// function as Review mutator.
-type ReviewFunc func(context.Context, *ent.ReviewMutation) (ent.Value, error)
+// The ReviewsFunc type is an adapter to allow the use of ordinary
+// function as Reviews mutator.
+type ReviewsFunc func(context.Context, *ent.ReviewsMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f ReviewFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.ReviewMutation); ok {
+func (f ReviewsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ReviewsMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReviewMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ReviewsMutation", m)
 }
 
-// The StudentFunc type is an adapter to allow the use of ordinary
-// function as Student mutator.
-type StudentFunc func(context.Context, *ent.StudentMutation) (ent.Value, error)
+// The StudentsFunc type is an adapter to allow the use of ordinary
+// function as Students mutator.
+type StudentsFunc func(context.Context, *ent.StudentsMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f StudentFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.StudentMutation); ok {
+func (f StudentsFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.StudentsMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StudentMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.StudentsMutation", m)
 }
 
-// The TeacherFunc type is an adapter to allow the use of ordinary
-// function as Teacher mutator.
-type TeacherFunc func(context.Context, *ent.TeacherMutation) (ent.Value, error)
+// The TeachersFunc type is an adapter to allow the use of ordinary
+// function as Teachers mutator.
+type TeachersFunc func(context.Context, *ent.TeachersMutation) (ent.Value, error)
 
 // Mutate calls f(ctx, m).
-func (f TeacherFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
-	if mv, ok := m.(*ent.TeacherMutation); ok {
+func (f TeachersFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.TeachersMutation); ok {
 		return f(ctx, mv)
 	}
-	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TeacherMutation", m)
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.TeachersMutation", m)
+}
+
+// The ThesisFunc type is an adapter to allow the use of ordinary
+// function as Thesis mutator.
+type ThesisFunc func(context.Context, *ent.ThesisMutation) (ent.Value, error)
+
+// Mutate calls f(ctx, m).
+func (f ThesisFunc) Mutate(ctx context.Context, m ent.Mutation) (ent.Value, error) {
+	if mv, ok := m.(*ent.ThesisMutation); ok {
+		return f(ctx, mv)
+	}
+	return nil, fmt.Errorf("unexpected mutation type %T. expect *ent.ThesisMutation", m)
 }
 
 // The UserFunc type is an adapter to allow the use of ordinary

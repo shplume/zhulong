@@ -4,6 +4,7 @@ package user
 
 import (
 	"entgo.io/ent/dialect/sql"
+	"entgo.io/ent/dialect/sql/sqlgraph"
 )
 
 const (
@@ -11,22 +12,76 @@ const (
 	Label = "user"
 	// FieldID holds the string denoting the id field in the database.
 	FieldID = "id"
-	// FieldRole holds the string denoting the role field in the database.
-	FieldRole = "role"
 	// FieldAccount holds the string denoting the account field in the database.
 	FieldAccount = "account"
 	// FieldPassword holds the string denoting the password field in the database.
 	FieldPassword = "password"
+	// FieldRole holds the string denoting the role field in the database.
+	FieldRole = "role"
+	// EdgeAdministrators holds the string denoting the administrators edge name in mutations.
+	EdgeAdministrators = "administrators"
+	// EdgeStudents holds the string denoting the students edge name in mutations.
+	EdgeStudents = "students"
+	// EdgeTeachers holds the string denoting the teachers edge name in mutations.
+	EdgeTeachers = "teachers"
+	// EdgeThesis holds the string denoting the thesis edge name in mutations.
+	EdgeThesis = "thesis"
+	// EdgeReviews holds the string denoting the reviews edge name in mutations.
+	EdgeReviews = "reviews"
+	// EdgeExamineThesis holds the string denoting the examinethesis edge name in mutations.
+	EdgeExamineThesis = "examineThesis"
 	// Table holds the table name of the user in the database.
 	Table = "users"
+	// AdministratorsTable is the table that holds the administrators relation/edge.
+	AdministratorsTable = "administrators"
+	// AdministratorsInverseTable is the table name for the Administrators entity.
+	// It exists in this package in order to avoid circular dependency with the "administrators" package.
+	AdministratorsInverseTable = "administrators"
+	// AdministratorsColumn is the table column denoting the administrators relation/edge.
+	AdministratorsColumn = "user_administrators"
+	// StudentsTable is the table that holds the students relation/edge.
+	StudentsTable = "students"
+	// StudentsInverseTable is the table name for the Students entity.
+	// It exists in this package in order to avoid circular dependency with the "students" package.
+	StudentsInverseTable = "students"
+	// StudentsColumn is the table column denoting the students relation/edge.
+	StudentsColumn = "user_students"
+	// TeachersTable is the table that holds the teachers relation/edge.
+	TeachersTable = "teachers"
+	// TeachersInverseTable is the table name for the Teachers entity.
+	// It exists in this package in order to avoid circular dependency with the "teachers" package.
+	TeachersInverseTable = "teachers"
+	// TeachersColumn is the table column denoting the teachers relation/edge.
+	TeachersColumn = "user_teachers"
+	// ThesisTable is the table that holds the thesis relation/edge.
+	ThesisTable = "theses"
+	// ThesisInverseTable is the table name for the Thesis entity.
+	// It exists in this package in order to avoid circular dependency with the "thesis" package.
+	ThesisInverseTable = "theses"
+	// ThesisColumn is the table column denoting the thesis relation/edge.
+	ThesisColumn = "user_thesis"
+	// ReviewsTable is the table that holds the reviews relation/edge.
+	ReviewsTable = "reviews"
+	// ReviewsInverseTable is the table name for the Reviews entity.
+	// It exists in this package in order to avoid circular dependency with the "reviews" package.
+	ReviewsInverseTable = "reviews"
+	// ReviewsColumn is the table column denoting the reviews relation/edge.
+	ReviewsColumn = "user_reviews"
+	// ExamineThesisTable is the table that holds the examineThesis relation/edge.
+	ExamineThesisTable = "theses"
+	// ExamineThesisInverseTable is the table name for the Thesis entity.
+	// It exists in this package in order to avoid circular dependency with the "thesis" package.
+	ExamineThesisInverseTable = "theses"
+	// ExamineThesisColumn is the table column denoting the examineThesis relation/edge.
+	ExamineThesisColumn = "thesis_examine"
 )
 
 // Columns holds all SQL columns for user fields.
 var Columns = []string{
 	FieldID,
-	FieldRole,
 	FieldAccount,
 	FieldPassword,
+	FieldRole,
 }
 
 // ValidColumn reports if the column name is valid (part of the table columns).
@@ -47,11 +102,6 @@ func ByID(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldID, opts...).ToFunc()
 }
 
-// ByRole orders the results by the role field.
-func ByRole(opts ...sql.OrderTermOption) OrderOption {
-	return sql.OrderByField(FieldRole, opts...).ToFunc()
-}
-
 // ByAccount orders the results by the account field.
 func ByAccount(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldAccount, opts...).ToFunc()
@@ -60,4 +110,114 @@ func ByAccount(opts ...sql.OrderTermOption) OrderOption {
 // ByPassword orders the results by the password field.
 func ByPassword(opts ...sql.OrderTermOption) OrderOption {
 	return sql.OrderByField(FieldPassword, opts...).ToFunc()
+}
+
+// ByRole orders the results by the role field.
+func ByRole(opts ...sql.OrderTermOption) OrderOption {
+	return sql.OrderByField(FieldRole, opts...).ToFunc()
+}
+
+// ByAdministratorsField orders the results by administrators field.
+func ByAdministratorsField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newAdministratorsStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByStudentsField orders the results by students field.
+func ByStudentsField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newStudentsStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByTeachersField orders the results by teachers field.
+func ByTeachersField(field string, opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newTeachersStep(), sql.OrderByField(field, opts...))
+	}
+}
+
+// ByThesisCount orders the results by thesis count.
+func ByThesisCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newThesisStep(), opts...)
+	}
+}
+
+// ByThesis orders the results by thesis terms.
+func ByThesis(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newThesisStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByReviewsCount orders the results by reviews count.
+func ByReviewsCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newReviewsStep(), opts...)
+	}
+}
+
+// ByReviews orders the results by reviews terms.
+func ByReviews(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newReviewsStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+
+// ByExamineThesisCount orders the results by examineThesis count.
+func ByExamineThesisCount(opts ...sql.OrderTermOption) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborsCount(s, newExamineThesisStep(), opts...)
+	}
+}
+
+// ByExamineThesis orders the results by examineThesis terms.
+func ByExamineThesis(term sql.OrderTerm, terms ...sql.OrderTerm) OrderOption {
+	return func(s *sql.Selector) {
+		sqlgraph.OrderByNeighborTerms(s, newExamineThesisStep(), append([]sql.OrderTerm{term}, terms...)...)
+	}
+}
+func newAdministratorsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(AdministratorsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, AdministratorsTable, AdministratorsColumn),
+	)
+}
+func newStudentsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(StudentsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, StudentsTable, StudentsColumn),
+	)
+}
+func newTeachersStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(TeachersInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2O, false, TeachersTable, TeachersColumn),
+	)
+}
+func newThesisStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ThesisInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ThesisTable, ThesisColumn),
+	)
+}
+func newReviewsStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ReviewsInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, false, ReviewsTable, ReviewsColumn),
+	)
+}
+func newExamineThesisStep() *sqlgraph.Step {
+	return sqlgraph.NewStep(
+		sqlgraph.From(Table, FieldID),
+		sqlgraph.To(ExamineThesisInverseTable, FieldID),
+		sqlgraph.Edge(sqlgraph.O2M, true, ExamineThesisTable, ExamineThesisColumn),
+	)
 }

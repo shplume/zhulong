@@ -10,8 +10,13 @@ import (
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shplume/zhulong/ent/predicate"
-	"github.com/shplume/zhulong/ent/user"
+	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // UserUpdate is the builder for updating User entities.
@@ -24,27 +29,6 @@ type UserUpdate struct {
 // Where appends a list predicates to the UserUpdate builder.
 func (uu *UserUpdate) Where(ps ...predicate.User) *UserUpdate {
 	uu.mutation.Where(ps...)
-	return uu
-}
-
-// SetRole sets the "role" field.
-func (uu *UserUpdate) SetRole(i int) *UserUpdate {
-	uu.mutation.ResetRole()
-	uu.mutation.SetRole(i)
-	return uu
-}
-
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (uu *UserUpdate) SetNillableRole(i *int) *UserUpdate {
-	if i != nil {
-		uu.SetRole(*i)
-	}
-	return uu
-}
-
-// AddRole adds i to the "role" field.
-func (uu *UserUpdate) AddRole(i int) *UserUpdate {
-	uu.mutation.AddRole(i)
 	return uu
 }
 
@@ -76,9 +60,213 @@ func (uu *UserUpdate) SetNillablePassword(s *string) *UserUpdate {
 	return uu
 }
 
+// SetRole sets the "role" field.
+func (uu *UserUpdate) SetRole(i int) *UserUpdate {
+	uu.mutation.ResetRole()
+	uu.mutation.SetRole(i)
+	return uu
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uu *UserUpdate) SetNillableRole(i *int) *UserUpdate {
+	if i != nil {
+		uu.SetRole(*i)
+	}
+	return uu
+}
+
+// AddRole adds i to the "role" field.
+func (uu *UserUpdate) AddRole(i int) *UserUpdate {
+	uu.mutation.AddRole(i)
+	return uu
+}
+
+// SetAdministratorsID sets the "administrators" edge to the Administrators entity by ID.
+func (uu *UserUpdate) SetAdministratorsID(id int) *UserUpdate {
+	uu.mutation.SetAdministratorsID(id)
+	return uu
+}
+
+// SetNillableAdministratorsID sets the "administrators" edge to the Administrators entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableAdministratorsID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetAdministratorsID(*id)
+	}
+	return uu
+}
+
+// SetAdministrators sets the "administrators" edge to the Administrators entity.
+func (uu *UserUpdate) SetAdministrators(a *Administrators) *UserUpdate {
+	return uu.SetAdministratorsID(a.ID)
+}
+
+// SetStudentsID sets the "students" edge to the Students entity by ID.
+func (uu *UserUpdate) SetStudentsID(id int) *UserUpdate {
+	uu.mutation.SetStudentsID(id)
+	return uu
+}
+
+// SetNillableStudentsID sets the "students" edge to the Students entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableStudentsID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetStudentsID(*id)
+	}
+	return uu
+}
+
+// SetStudents sets the "students" edge to the Students entity.
+func (uu *UserUpdate) SetStudents(s *Students) *UserUpdate {
+	return uu.SetStudentsID(s.ID)
+}
+
+// SetTeachersID sets the "teachers" edge to the Teachers entity by ID.
+func (uu *UserUpdate) SetTeachersID(id int) *UserUpdate {
+	uu.mutation.SetTeachersID(id)
+	return uu
+}
+
+// SetNillableTeachersID sets the "teachers" edge to the Teachers entity by ID if the given value is not nil.
+func (uu *UserUpdate) SetNillableTeachersID(id *int) *UserUpdate {
+	if id != nil {
+		uu = uu.SetTeachersID(*id)
+	}
+	return uu
+}
+
+// SetTeachers sets the "teachers" edge to the Teachers entity.
+func (uu *UserUpdate) SetTeachers(t *Teachers) *UserUpdate {
+	return uu.SetTeachersID(t.ID)
+}
+
+// AddThesiIDs adds the "thesis" edge to the Thesis entity by IDs.
+func (uu *UserUpdate) AddThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddThesiIDs(ids...)
+	return uu
+}
+
+// AddThesis adds the "thesis" edges to the Thesis entity.
+func (uu *UserUpdate) AddThesis(t ...*Thesis) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddThesiIDs(ids...)
+}
+
+// AddReviewIDs adds the "reviews" edge to the Reviews entity by IDs.
+func (uu *UserUpdate) AddReviewIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddReviewIDs(ids...)
+	return uu
+}
+
+// AddReviews adds the "reviews" edges to the Reviews entity.
+func (uu *UserUpdate) AddReviews(r ...*Reviews) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.AddReviewIDs(ids...)
+}
+
+// AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
+func (uu *UserUpdate) AddExamineThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.AddExamineThesiIDs(ids...)
+	return uu
+}
+
+// AddExamineThesis adds the "examineThesis" edges to the Thesis entity.
+func (uu *UserUpdate) AddExamineThesis(t ...*Thesis) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.AddExamineThesiIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uu *UserUpdate) Mutation() *UserMutation {
 	return uu.mutation
+}
+
+// ClearAdministrators clears the "administrators" edge to the Administrators entity.
+func (uu *UserUpdate) ClearAdministrators() *UserUpdate {
+	uu.mutation.ClearAdministrators()
+	return uu
+}
+
+// ClearStudents clears the "students" edge to the Students entity.
+func (uu *UserUpdate) ClearStudents() *UserUpdate {
+	uu.mutation.ClearStudents()
+	return uu
+}
+
+// ClearTeachers clears the "teachers" edge to the Teachers entity.
+func (uu *UserUpdate) ClearTeachers() *UserUpdate {
+	uu.mutation.ClearTeachers()
+	return uu
+}
+
+// ClearThesis clears all "thesis" edges to the Thesis entity.
+func (uu *UserUpdate) ClearThesis() *UserUpdate {
+	uu.mutation.ClearThesis()
+	return uu
+}
+
+// RemoveThesiIDs removes the "thesis" edge to Thesis entities by IDs.
+func (uu *UserUpdate) RemoveThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveThesiIDs(ids...)
+	return uu
+}
+
+// RemoveThesis removes "thesis" edges to Thesis entities.
+func (uu *UserUpdate) RemoveThesis(t ...*Thesis) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveThesiIDs(ids...)
+}
+
+// ClearReviews clears all "reviews" edges to the Reviews entity.
+func (uu *UserUpdate) ClearReviews() *UserUpdate {
+	uu.mutation.ClearReviews()
+	return uu
+}
+
+// RemoveReviewIDs removes the "reviews" edge to Reviews entities by IDs.
+func (uu *UserUpdate) RemoveReviewIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveReviewIDs(ids...)
+	return uu
+}
+
+// RemoveReviews removes "reviews" edges to Reviews entities.
+func (uu *UserUpdate) RemoveReviews(r ...*Reviews) *UserUpdate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uu.RemoveReviewIDs(ids...)
+}
+
+// ClearExamineThesis clears all "examineThesis" edges to the Thesis entity.
+func (uu *UserUpdate) ClearExamineThesis() *UserUpdate {
+	uu.mutation.ClearExamineThesis()
+	return uu
+}
+
+// RemoveExamineThesiIDs removes the "examineThesis" edge to Thesis entities by IDs.
+func (uu *UserUpdate) RemoveExamineThesiIDs(ids ...int) *UserUpdate {
+	uu.mutation.RemoveExamineThesiIDs(ids...)
+	return uu
+}
+
+// RemoveExamineThesis removes "examineThesis" edges to Thesis entities.
+func (uu *UserUpdate) RemoveExamineThesis(t ...*Thesis) *UserUpdate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uu.RemoveExamineThesiIDs(ids...)
 }
 
 // Save executes the query and returns the number of nodes affected by the update operation.
@@ -117,17 +305,239 @@ func (uu *UserUpdate) sqlSave(ctx context.Context) (n int, err error) {
 			}
 		}
 	}
+	if value, ok := uu.mutation.Account(); ok {
+		_spec.SetField(user.FieldAccount, field.TypeString, value)
+	}
+	if value, ok := uu.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
 	if value, ok := uu.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeInt, value)
 	}
 	if value, ok := uu.mutation.AddedRole(); ok {
 		_spec.AddField(user.FieldRole, field.TypeInt, value)
 	}
-	if value, ok := uu.mutation.Account(); ok {
-		_spec.SetField(user.FieldAccount, field.TypeString, value)
+	if uu.mutation.AdministratorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if value, ok := uu.mutation.Password(); ok {
-		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	if nodes := uu.mutation.AdministratorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.StudentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.StudentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.TeachersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.TeachersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedThesisIDs(); len(nodes) > 0 && !uu.mutation.ThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedReviewsIDs(); len(nodes) > 0 && !uu.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uu.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.RemovedExamineThesisIDs(); len(nodes) > 0 && !uu.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uu.mutation.ExamineThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	if n, err = sqlgraph.UpdateNodes(ctx, uu.driver, _spec); err != nil {
 		if _, ok := err.(*sqlgraph.NotFoundError); ok {
@@ -147,27 +557,6 @@ type UserUpdateOne struct {
 	fields   []string
 	hooks    []Hook
 	mutation *UserMutation
-}
-
-// SetRole sets the "role" field.
-func (uuo *UserUpdateOne) SetRole(i int) *UserUpdateOne {
-	uuo.mutation.ResetRole()
-	uuo.mutation.SetRole(i)
-	return uuo
-}
-
-// SetNillableRole sets the "role" field if the given value is not nil.
-func (uuo *UserUpdateOne) SetNillableRole(i *int) *UserUpdateOne {
-	if i != nil {
-		uuo.SetRole(*i)
-	}
-	return uuo
-}
-
-// AddRole adds i to the "role" field.
-func (uuo *UserUpdateOne) AddRole(i int) *UserUpdateOne {
-	uuo.mutation.AddRole(i)
-	return uuo
 }
 
 // SetAccount sets the "account" field.
@@ -198,9 +587,213 @@ func (uuo *UserUpdateOne) SetNillablePassword(s *string) *UserUpdateOne {
 	return uuo
 }
 
+// SetRole sets the "role" field.
+func (uuo *UserUpdateOne) SetRole(i int) *UserUpdateOne {
+	uuo.mutation.ResetRole()
+	uuo.mutation.SetRole(i)
+	return uuo
+}
+
+// SetNillableRole sets the "role" field if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableRole(i *int) *UserUpdateOne {
+	if i != nil {
+		uuo.SetRole(*i)
+	}
+	return uuo
+}
+
+// AddRole adds i to the "role" field.
+func (uuo *UserUpdateOne) AddRole(i int) *UserUpdateOne {
+	uuo.mutation.AddRole(i)
+	return uuo
+}
+
+// SetAdministratorsID sets the "administrators" edge to the Administrators entity by ID.
+func (uuo *UserUpdateOne) SetAdministratorsID(id int) *UserUpdateOne {
+	uuo.mutation.SetAdministratorsID(id)
+	return uuo
+}
+
+// SetNillableAdministratorsID sets the "administrators" edge to the Administrators entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableAdministratorsID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetAdministratorsID(*id)
+	}
+	return uuo
+}
+
+// SetAdministrators sets the "administrators" edge to the Administrators entity.
+func (uuo *UserUpdateOne) SetAdministrators(a *Administrators) *UserUpdateOne {
+	return uuo.SetAdministratorsID(a.ID)
+}
+
+// SetStudentsID sets the "students" edge to the Students entity by ID.
+func (uuo *UserUpdateOne) SetStudentsID(id int) *UserUpdateOne {
+	uuo.mutation.SetStudentsID(id)
+	return uuo
+}
+
+// SetNillableStudentsID sets the "students" edge to the Students entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableStudentsID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetStudentsID(*id)
+	}
+	return uuo
+}
+
+// SetStudents sets the "students" edge to the Students entity.
+func (uuo *UserUpdateOne) SetStudents(s *Students) *UserUpdateOne {
+	return uuo.SetStudentsID(s.ID)
+}
+
+// SetTeachersID sets the "teachers" edge to the Teachers entity by ID.
+func (uuo *UserUpdateOne) SetTeachersID(id int) *UserUpdateOne {
+	uuo.mutation.SetTeachersID(id)
+	return uuo
+}
+
+// SetNillableTeachersID sets the "teachers" edge to the Teachers entity by ID if the given value is not nil.
+func (uuo *UserUpdateOne) SetNillableTeachersID(id *int) *UserUpdateOne {
+	if id != nil {
+		uuo = uuo.SetTeachersID(*id)
+	}
+	return uuo
+}
+
+// SetTeachers sets the "teachers" edge to the Teachers entity.
+func (uuo *UserUpdateOne) SetTeachers(t *Teachers) *UserUpdateOne {
+	return uuo.SetTeachersID(t.ID)
+}
+
+// AddThesiIDs adds the "thesis" edge to the Thesis entity by IDs.
+func (uuo *UserUpdateOne) AddThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddThesiIDs(ids...)
+	return uuo
+}
+
+// AddThesis adds the "thesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) AddThesis(t ...*Thesis) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddThesiIDs(ids...)
+}
+
+// AddReviewIDs adds the "reviews" edge to the Reviews entity by IDs.
+func (uuo *UserUpdateOne) AddReviewIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddReviewIDs(ids...)
+	return uuo
+}
+
+// AddReviews adds the "reviews" edges to the Reviews entity.
+func (uuo *UserUpdateOne) AddReviews(r ...*Reviews) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.AddReviewIDs(ids...)
+}
+
+// AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
+func (uuo *UserUpdateOne) AddExamineThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.AddExamineThesiIDs(ids...)
+	return uuo
+}
+
+// AddExamineThesis adds the "examineThesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) AddExamineThesis(t ...*Thesis) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.AddExamineThesiIDs(ids...)
+}
+
 // Mutation returns the UserMutation object of the builder.
 func (uuo *UserUpdateOne) Mutation() *UserMutation {
 	return uuo.mutation
+}
+
+// ClearAdministrators clears the "administrators" edge to the Administrators entity.
+func (uuo *UserUpdateOne) ClearAdministrators() *UserUpdateOne {
+	uuo.mutation.ClearAdministrators()
+	return uuo
+}
+
+// ClearStudents clears the "students" edge to the Students entity.
+func (uuo *UserUpdateOne) ClearStudents() *UserUpdateOne {
+	uuo.mutation.ClearStudents()
+	return uuo
+}
+
+// ClearTeachers clears the "teachers" edge to the Teachers entity.
+func (uuo *UserUpdateOne) ClearTeachers() *UserUpdateOne {
+	uuo.mutation.ClearTeachers()
+	return uuo
+}
+
+// ClearThesis clears all "thesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) ClearThesis() *UserUpdateOne {
+	uuo.mutation.ClearThesis()
+	return uuo
+}
+
+// RemoveThesiIDs removes the "thesis" edge to Thesis entities by IDs.
+func (uuo *UserUpdateOne) RemoveThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveThesiIDs(ids...)
+	return uuo
+}
+
+// RemoveThesis removes "thesis" edges to Thesis entities.
+func (uuo *UserUpdateOne) RemoveThesis(t ...*Thesis) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveThesiIDs(ids...)
+}
+
+// ClearReviews clears all "reviews" edges to the Reviews entity.
+func (uuo *UserUpdateOne) ClearReviews() *UserUpdateOne {
+	uuo.mutation.ClearReviews()
+	return uuo
+}
+
+// RemoveReviewIDs removes the "reviews" edge to Reviews entities by IDs.
+func (uuo *UserUpdateOne) RemoveReviewIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveReviewIDs(ids...)
+	return uuo
+}
+
+// RemoveReviews removes "reviews" edges to Reviews entities.
+func (uuo *UserUpdateOne) RemoveReviews(r ...*Reviews) *UserUpdateOne {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uuo.RemoveReviewIDs(ids...)
+}
+
+// ClearExamineThesis clears all "examineThesis" edges to the Thesis entity.
+func (uuo *UserUpdateOne) ClearExamineThesis() *UserUpdateOne {
+	uuo.mutation.ClearExamineThesis()
+	return uuo
+}
+
+// RemoveExamineThesiIDs removes the "examineThesis" edge to Thesis entities by IDs.
+func (uuo *UserUpdateOne) RemoveExamineThesiIDs(ids ...int) *UserUpdateOne {
+	uuo.mutation.RemoveExamineThesiIDs(ids...)
+	return uuo
+}
+
+// RemoveExamineThesis removes "examineThesis" edges to Thesis entities.
+func (uuo *UserUpdateOne) RemoveExamineThesis(t ...*Thesis) *UserUpdateOne {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uuo.RemoveExamineThesiIDs(ids...)
 }
 
 // Where appends a list predicates to the UserUpdate builder.
@@ -269,17 +862,239 @@ func (uuo *UserUpdateOne) sqlSave(ctx context.Context) (_node *User, err error) 
 			}
 		}
 	}
+	if value, ok := uuo.mutation.Account(); ok {
+		_spec.SetField(user.FieldAccount, field.TypeString, value)
+	}
+	if value, ok := uuo.mutation.Password(); ok {
+		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	}
 	if value, ok := uuo.mutation.Role(); ok {
 		_spec.SetField(user.FieldRole, field.TypeInt, value)
 	}
 	if value, ok := uuo.mutation.AddedRole(); ok {
 		_spec.AddField(user.FieldRole, field.TypeInt, value)
 	}
-	if value, ok := uuo.mutation.Account(); ok {
-		_spec.SetField(user.FieldAccount, field.TypeString, value)
+	if uuo.mutation.AdministratorsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
 	}
-	if value, ok := uuo.mutation.Password(); ok {
-		_spec.SetField(user.FieldPassword, field.TypeString, value)
+	if nodes := uuo.mutation.AdministratorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.StudentsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.StudentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.TeachersCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.TeachersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedThesisIDs(); len(nodes) > 0 && !uuo.mutation.ThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedReviewsIDs(); len(nodes) > 0 && !uuo.mutation.ReviewsCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
+	}
+	if uuo.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.RemovedExamineThesisIDs(); len(nodes) > 0 && !uuo.mutation.ExamineThesisCleared() {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Clear = append(_spec.Edges.Clear, edge)
+	}
+	if nodes := uuo.mutation.ExamineThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges.Add = append(_spec.Edges.Add, edge)
 	}
 	_node = &User{config: uuo.config}
 	_spec.Assign = _node.assignValues

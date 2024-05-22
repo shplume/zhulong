@@ -9,7 +9,12 @@ import (
 
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shplume/zhulong/ent/user"
+	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // UserCreate is the builder for creating a User entity.
@@ -17,12 +22,6 @@ type UserCreate struct {
 	config
 	mutation *UserMutation
 	hooks    []Hook
-}
-
-// SetRole sets the "role" field.
-func (uc *UserCreate) SetRole(i int) *UserCreate {
-	uc.mutation.SetRole(i)
-	return uc
 }
 
 // SetAccount sets the "account" field.
@@ -37,10 +36,112 @@ func (uc *UserCreate) SetPassword(s string) *UserCreate {
 	return uc
 }
 
-// SetID sets the "id" field.
-func (uc *UserCreate) SetID(i int) *UserCreate {
-	uc.mutation.SetID(i)
+// SetRole sets the "role" field.
+func (uc *UserCreate) SetRole(i int) *UserCreate {
+	uc.mutation.SetRole(i)
 	return uc
+}
+
+// SetAdministratorsID sets the "administrators" edge to the Administrators entity by ID.
+func (uc *UserCreate) SetAdministratorsID(id int) *UserCreate {
+	uc.mutation.SetAdministratorsID(id)
+	return uc
+}
+
+// SetNillableAdministratorsID sets the "administrators" edge to the Administrators entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableAdministratorsID(id *int) *UserCreate {
+	if id != nil {
+		uc = uc.SetAdministratorsID(*id)
+	}
+	return uc
+}
+
+// SetAdministrators sets the "administrators" edge to the Administrators entity.
+func (uc *UserCreate) SetAdministrators(a *Administrators) *UserCreate {
+	return uc.SetAdministratorsID(a.ID)
+}
+
+// SetStudentsID sets the "students" edge to the Students entity by ID.
+func (uc *UserCreate) SetStudentsID(id int) *UserCreate {
+	uc.mutation.SetStudentsID(id)
+	return uc
+}
+
+// SetNillableStudentsID sets the "students" edge to the Students entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableStudentsID(id *int) *UserCreate {
+	if id != nil {
+		uc = uc.SetStudentsID(*id)
+	}
+	return uc
+}
+
+// SetStudents sets the "students" edge to the Students entity.
+func (uc *UserCreate) SetStudents(s *Students) *UserCreate {
+	return uc.SetStudentsID(s.ID)
+}
+
+// SetTeachersID sets the "teachers" edge to the Teachers entity by ID.
+func (uc *UserCreate) SetTeachersID(id int) *UserCreate {
+	uc.mutation.SetTeachersID(id)
+	return uc
+}
+
+// SetNillableTeachersID sets the "teachers" edge to the Teachers entity by ID if the given value is not nil.
+func (uc *UserCreate) SetNillableTeachersID(id *int) *UserCreate {
+	if id != nil {
+		uc = uc.SetTeachersID(*id)
+	}
+	return uc
+}
+
+// SetTeachers sets the "teachers" edge to the Teachers entity.
+func (uc *UserCreate) SetTeachers(t *Teachers) *UserCreate {
+	return uc.SetTeachersID(t.ID)
+}
+
+// AddThesiIDs adds the "thesis" edge to the Thesis entity by IDs.
+func (uc *UserCreate) AddThesiIDs(ids ...int) *UserCreate {
+	uc.mutation.AddThesiIDs(ids...)
+	return uc
+}
+
+// AddThesis adds the "thesis" edges to the Thesis entity.
+func (uc *UserCreate) AddThesis(t ...*Thesis) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddThesiIDs(ids...)
+}
+
+// AddReviewIDs adds the "reviews" edge to the Reviews entity by IDs.
+func (uc *UserCreate) AddReviewIDs(ids ...int) *UserCreate {
+	uc.mutation.AddReviewIDs(ids...)
+	return uc
+}
+
+// AddReviews adds the "reviews" edges to the Reviews entity.
+func (uc *UserCreate) AddReviews(r ...*Reviews) *UserCreate {
+	ids := make([]int, len(r))
+	for i := range r {
+		ids[i] = r[i].ID
+	}
+	return uc.AddReviewIDs(ids...)
+}
+
+// AddExamineThesiIDs adds the "examineThesis" edge to the Thesis entity by IDs.
+func (uc *UserCreate) AddExamineThesiIDs(ids ...int) *UserCreate {
+	uc.mutation.AddExamineThesiIDs(ids...)
+	return uc
+}
+
+// AddExamineThesis adds the "examineThesis" edges to the Thesis entity.
+func (uc *UserCreate) AddExamineThesis(t ...*Thesis) *UserCreate {
+	ids := make([]int, len(t))
+	for i := range t {
+		ids[i] = t[i].ID
+	}
+	return uc.AddExamineThesiIDs(ids...)
 }
 
 // Mutation returns the UserMutation object of the builder.
@@ -77,14 +178,14 @@ func (uc *UserCreate) ExecX(ctx context.Context) {
 
 // check runs all checks and user-defined validators on the builder.
 func (uc *UserCreate) check() error {
-	if _, ok := uc.mutation.Role(); !ok {
-		return &ValidationError{Name: "role", err: errors.New(`ent: missing required field "User.role"`)}
-	}
 	if _, ok := uc.mutation.Account(); !ok {
 		return &ValidationError{Name: "account", err: errors.New(`ent: missing required field "User.account"`)}
 	}
 	if _, ok := uc.mutation.Password(); !ok {
 		return &ValidationError{Name: "password", err: errors.New(`ent: missing required field "User.password"`)}
+	}
+	if _, ok := uc.mutation.Role(); !ok {
+		return &ValidationError{Name: "role", err: errors.New(`ent: missing required field "User.role"`)}
 	}
 	return nil
 }
@@ -100,10 +201,8 @@ func (uc *UserCreate) sqlSave(ctx context.Context) (*User, error) {
 		}
 		return nil, err
 	}
-	if _spec.ID.Value != _node.ID {
-		id := _spec.ID.Value.(int64)
-		_node.ID = int(id)
-	}
+	id := _spec.ID.Value.(int64)
+	_node.ID = int(id)
 	uc.mutation.id = &_node.ID
 	uc.mutation.done = true
 	return _node, nil
@@ -114,14 +213,6 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 		_node = &User{config: uc.config}
 		_spec = sqlgraph.NewCreateSpec(user.Table, sqlgraph.NewFieldSpec(user.FieldID, field.TypeInt))
 	)
-	if id, ok := uc.mutation.ID(); ok {
-		_node.ID = id
-		_spec.ID.Value = id
-	}
-	if value, ok := uc.mutation.Role(); ok {
-		_spec.SetField(user.FieldRole, field.TypeInt, value)
-		_node.Role = value
-	}
 	if value, ok := uc.mutation.Account(); ok {
 		_spec.SetField(user.FieldAccount, field.TypeString, value)
 		_node.Account = value
@@ -129,6 +220,106 @@ func (uc *UserCreate) createSpec() (*User, *sqlgraph.CreateSpec) {
 	if value, ok := uc.mutation.Password(); ok {
 		_spec.SetField(user.FieldPassword, field.TypeString, value)
 		_node.Password = value
+	}
+	if value, ok := uc.mutation.Role(); ok {
+		_spec.SetField(user.FieldRole, field.TypeInt, value)
+		_node.Role = value
+	}
+	if nodes := uc.mutation.AdministratorsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.AdministratorsTable,
+			Columns: []string{user.AdministratorsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(administrators.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.StudentsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.StudentsTable,
+			Columns: []string{user.StudentsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(students.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.TeachersIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2O,
+			Inverse: false,
+			Table:   user.TeachersTable,
+			Columns: []string{user.TeachersColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(teachers.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ThesisTable,
+			Columns: []string{user.ThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ReviewsIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: false,
+			Table:   user.ReviewsTable,
+			Columns: []string{user.ReviewsColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(reviews.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
+	}
+	if nodes := uc.mutation.ExamineThesisIDs(); len(nodes) > 0 {
+		edge := &sqlgraph.EdgeSpec{
+			Rel:     sqlgraph.O2M,
+			Inverse: true,
+			Table:   user.ExamineThesisTable,
+			Columns: []string{user.ExamineThesisColumn},
+			Bidi:    false,
+			Target: &sqlgraph.EdgeTarget{
+				IDSpec: sqlgraph.NewFieldSpec(thesis.FieldID, field.TypeInt),
+			},
+		}
+		for _, k := range nodes {
+			edge.Target.Nodes = append(edge.Target.Nodes, k)
+		}
+		_spec.Edges = append(_spec.Edges, edge)
 	}
 	return _node, _spec
 }
@@ -177,7 +368,7 @@ func (ucb *UserCreateBulk) Save(ctx context.Context) ([]*User, error) {
 					return nil, err
 				}
 				mutation.id = &nodes[i].ID
-				if specs[i].ID.Value != nil && nodes[i].ID == 0 {
+				if specs[i].ID.Value != nil {
 					id := specs[i].ID.Value.(int64)
 					nodes[i].ID = int(id)
 				}

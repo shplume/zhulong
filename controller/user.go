@@ -1,96 +1,230 @@
 package controller
 
 import (
-	"log/slog"
 	"net/http"
 
+	"github.com/ZEQUANR/zhulong/logger"
+	"github.com/ZEQUANR/zhulong/model"
+	"github.com/ZEQUANR/zhulong/model/api"
+	"github.com/ZEQUANR/zhulong/services"
+	"github.com/ZEQUANR/zhulong/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/shplume/zhulong/service"
-	"github.com/shplume/zhulong/utils"
 )
 
-func CreateUser(c *gin.Context) {
-	var data struct {
-		Account  string `json:"account" binding:"required"`
-		Password string `json:"password" binding:"required"`
-		Role     int    `json:"role" binding:"required"`
-	}
-
+func UserLogin(c *gin.Context) {
+	data := &api.Login{}
 	if err := c.BindJSON(&data); err != nil {
-		slog.Error(err.Error())
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid Parameter",
-		})
-
+		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
 		return
 	}
 
-	saltPassword, err := utils.GenerateSalt(&data.Password)
+	user, err := services.QueryUserByAccountPassword(data.Account, utils.Md5Encode(data.Password))
 	if err != nil {
-		slog.Error(err.Error())
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Create User failed",
+	token, err := utils.GenerateToken(uint(user.ID))
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionCreate, logger.ErrorBodyCreateToken, err)
+		return
+	}
+
+	c.JSON(http.StatusOK, &gin.H{"token": token})
+}
+
+func UserInfo(c *gin.Context) {
+	userId, err := utils.ParseUserIDInToken(c)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+		return
+	}
+
+	user, err := services.QueryUserById(userId)
+	if err != nil {
+		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+		return
+	}
+
+	if user.Role == model.Admin {
+		info, err := services.QueryAdministratorsById(userId)
+		if err != nil {
+			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"userId":  user.ID,
+			"account": user.Account,
+			"avatar":  info.Avatar,
+			"role":    user.Role,
+			"name":    info.Name,
+			"college": info.College,
+			"phone":   info.Phone,
+			"number":  info.Number,
 		})
 
 		return
 	}
 
-	data.Password = saltPassword
-	if err := service.CreateUser(data.Account, data.Password, data.Role); err != nil {
-		slog.Error(err.Error())
+	if user.Role == model.Teacher {
+		info, err := services.QueryTeachersById(userId)
+		if err != nil {
+			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+			return
+		}
 
-		c.JSON(http.StatusInternalServerError, gin.H{
-			"message": "Create User failed",
+		c.JSON(http.StatusOK, gin.H{
+			"userId":  user.ID,
+			"account": user.Account,
+			"avatar":  info.Avatar,
+			"role":    user.Role,
+			"name":    info.Name,
+			"college": info.College,
+			"phone":   info.Phone,
+			"number":  info.Number,
 		})
 
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
-		"message": "User create success",
+	if user.Role == model.Student {
+		info, err := services.QueryStudentsById(userId)
+		if err != nil {
+			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+			return
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"userId":  user.ID,
+			"account": user.Account,
+			"avatar":  info.Avatar,
+			"role":    user.Role,
+			"name":    info.Name,
+			"college": info.College,
+			"phone":   info.Phone,
+			"number":  info.Number,
+		})
+
+		return
+	}
+
+	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+}
+
+// func UserEditor(c *gin.Context) {
+// 	token, err := utils.ExtractToken(c)
+// 	if err != nil {
+// 		logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyRequestHeader, err)
+// 		return
+// 	}
+
+// 	id, err := utils.ParseAToken(token, "user_id")
+// 	if err != nil {
+// 		logger.CreateLog(c, logger.ErrorWhoServer, logger.ErrorActionParse, logger.ErrorBodyParseToken, err)
+// 		return
+// 	}
+
+// 	user, err := services.QueryUserById(int(id.(float64)))
+// 	if err != nil {
+// 		logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 		return
+// 	}
+
+// 	if user.Role == model.Admin {
+// 		data := api.Administrator{}
+
+// 		if err := c.BindJSON(&data); err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+// 			return
+// 		}
+
+// 		result, err := services.UpdateAdministratorsById(user.ID, data)
+// 		if err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 			return
+// 		}
+
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"user_id":  user.ID,
+// 			"account":  user.Account,
+// 			"role":     user.Role,
+// 			"name":     result.Name,
+// 			"identity": result.Identity,
+// 			"college":  result.College,
+// 			"phone":    result.Phone,
+// 		})
+
+// 		return
+// 	}
+
+// 	if user.Role == model.Teacher {
+// 		data := api.Teacher{}
+
+// 		if err := c.BindJSON(&data); err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+// 			return
+// 		}
+
+// 		result, err := services.UpdateTeachersById(user.ID, data)
+// 		if err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 			return
+// 		}
+
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"user_id":  user.ID,
+// 			"account":  user.Account,
+// 			"role":     user.Role,
+// 			"name":     result.Name,
+// 			"identity": result.Identity,
+// 			"college":  result.College,
+// 			"phone":    result.Phone,
+// 		})
+
+// 		return
+// 	}
+
+// 	if user.Role == model.Student {
+// 		data := api.Student{}
+
+// 		if err := c.BindJSON(&data); err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoClient, logger.ErrorActionRead, logger.ErrorBodyParameters, err)
+// 			return
+// 		}
+
+// 		result, err := services.UpdateStudentsById(user.ID, data)
+// 		if err != nil {
+// 			logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// 			return
+// 		}
+
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"user_id":  user.ID,
+// 			"account":  user.Account,
+// 			"role":     user.Role,
+// 			"name":     result.Name,
+// 			"college":  result.College,
+// 			"phone":    result.Phone,
+// 			"subject":  result.Subject,
+// 			"class":    result.Class,
+// 			"identity": result.Identity,
+// 		})
+
+// 		return
+// 	}
+
+// 	logger.CreateLog(c, logger.ErrorWhoDatabase, logger.ErrorActionQuery, logger.ErrorBodyQueryingUser, err)
+// }
+
+func UserRegister(c *gin.Context) {
+	c.JSON(200, gin.H{
+		"message": "pong",
 	})
 }
 
-func UserLogin(c *gin.Context) {
-	var data struct {
-		Account  string `json:"account" binding:"required"`
-		Password string `json:"password" binding:"required"`
-	}
-
-	if err := c.BindJSON(&data); err != nil {
-		slog.Error(err.Error())
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Invalid Parameter",
-		})
-
-		return
-	}
-
-	user, err := service.QueryUser(data.Account)
-	if err != nil {
-		slog.Error(err.Error())
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Incorrect Username or Password",
-		})
-
-		return
-	}
-
-	if !utils.CompareSalt([]byte(user.Password), &data.Password) {
-		slog.Error("password is incorrect")
-
-		c.JSON(http.StatusBadRequest, gin.H{
-			"message": "Incorrect Username or Password",
-		})
-
-		return
-	}
-
+func UserLogout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{
-		"message": "User Login Success",
+		"message": "pong",
 	})
 }

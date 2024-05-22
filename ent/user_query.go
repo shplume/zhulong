@@ -4,23 +4,35 @@ package ent
 
 import (
 	"context"
+	"database/sql/driver"
 	"fmt"
 	"math"
 
 	"entgo.io/ent/dialect/sql"
 	"entgo.io/ent/dialect/sql/sqlgraph"
 	"entgo.io/ent/schema/field"
-	"github.com/shplume/zhulong/ent/predicate"
-	"github.com/shplume/zhulong/ent/user"
+	"github.com/ZEQUANR/zhulong/ent/administrators"
+	"github.com/ZEQUANR/zhulong/ent/predicate"
+	"github.com/ZEQUANR/zhulong/ent/reviews"
+	"github.com/ZEQUANR/zhulong/ent/students"
+	"github.com/ZEQUANR/zhulong/ent/teachers"
+	"github.com/ZEQUANR/zhulong/ent/thesis"
+	"github.com/ZEQUANR/zhulong/ent/user"
 )
 
 // UserQuery is the builder for querying User entities.
 type UserQuery struct {
 	config
-	ctx        *QueryContext
-	order      []user.OrderOption
-	inters     []Interceptor
-	predicates []predicate.User
+	ctx                *QueryContext
+	order              []user.OrderOption
+	inters             []Interceptor
+	predicates         []predicate.User
+	withAdministrators *AdministratorsQuery
+	withStudents       *StudentsQuery
+	withTeachers       *TeachersQuery
+	withThesis         *ThesisQuery
+	withReviews        *ReviewsQuery
+	withExamineThesis  *ThesisQuery
 	// intermediate query (i.e. traversal path).
 	sql  *sql.Selector
 	path func(context.Context) (*sql.Selector, error)
@@ -55,6 +67,138 @@ func (uq *UserQuery) Unique(unique bool) *UserQuery {
 func (uq *UserQuery) Order(o ...user.OrderOption) *UserQuery {
 	uq.order = append(uq.order, o...)
 	return uq
+}
+
+// QueryAdministrators chains the current query on the "administrators" edge.
+func (uq *UserQuery) QueryAdministrators() *AdministratorsQuery {
+	query := (&AdministratorsClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(administrators.Table, administrators.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.AdministratorsTable, user.AdministratorsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryStudents chains the current query on the "students" edge.
+func (uq *UserQuery) QueryStudents() *StudentsQuery {
+	query := (&StudentsClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(students.Table, students.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.StudentsTable, user.StudentsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryTeachers chains the current query on the "teachers" edge.
+func (uq *UserQuery) QueryTeachers() *TeachersQuery {
+	query := (&TeachersClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(teachers.Table, teachers.FieldID),
+			sqlgraph.Edge(sqlgraph.O2O, false, user.TeachersTable, user.TeachersColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryThesis chains the current query on the "thesis" edge.
+func (uq *UserQuery) QueryThesis() *ThesisQuery {
+	query := (&ThesisClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(thesis.Table, thesis.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ThesisTable, user.ThesisColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryReviews chains the current query on the "reviews" edge.
+func (uq *UserQuery) QueryReviews() *ReviewsQuery {
+	query := (&ReviewsClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(reviews.Table, reviews.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, false, user.ReviewsTable, user.ReviewsColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
+}
+
+// QueryExamineThesis chains the current query on the "examineThesis" edge.
+func (uq *UserQuery) QueryExamineThesis() *ThesisQuery {
+	query := (&ThesisClient{config: uq.config}).Query()
+	query.path = func(ctx context.Context) (fromU *sql.Selector, err error) {
+		if err := uq.prepareQuery(ctx); err != nil {
+			return nil, err
+		}
+		selector := uq.sqlQuery(ctx)
+		if err := selector.Err(); err != nil {
+			return nil, err
+		}
+		step := sqlgraph.NewStep(
+			sqlgraph.From(user.Table, user.FieldID, selector),
+			sqlgraph.To(thesis.Table, thesis.FieldID),
+			sqlgraph.Edge(sqlgraph.O2M, true, user.ExamineThesisTable, user.ExamineThesisColumn),
+		)
+		fromU = sqlgraph.SetNeighbors(uq.driver.Dialect(), step)
+		return fromU, nil
+	}
+	return query
 }
 
 // First returns the first User entity from the query.
@@ -244,15 +388,87 @@ func (uq *UserQuery) Clone() *UserQuery {
 		return nil
 	}
 	return &UserQuery{
-		config:     uq.config,
-		ctx:        uq.ctx.Clone(),
-		order:      append([]user.OrderOption{}, uq.order...),
-		inters:     append([]Interceptor{}, uq.inters...),
-		predicates: append([]predicate.User{}, uq.predicates...),
+		config:             uq.config,
+		ctx:                uq.ctx.Clone(),
+		order:              append([]user.OrderOption{}, uq.order...),
+		inters:             append([]Interceptor{}, uq.inters...),
+		predicates:         append([]predicate.User{}, uq.predicates...),
+		withAdministrators: uq.withAdministrators.Clone(),
+		withStudents:       uq.withStudents.Clone(),
+		withTeachers:       uq.withTeachers.Clone(),
+		withThesis:         uq.withThesis.Clone(),
+		withReviews:        uq.withReviews.Clone(),
+		withExamineThesis:  uq.withExamineThesis.Clone(),
 		// clone intermediate query.
 		sql:  uq.sql.Clone(),
 		path: uq.path,
 	}
+}
+
+// WithAdministrators tells the query-builder to eager-load the nodes that are connected to
+// the "administrators" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithAdministrators(opts ...func(*AdministratorsQuery)) *UserQuery {
+	query := (&AdministratorsClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withAdministrators = query
+	return uq
+}
+
+// WithStudents tells the query-builder to eager-load the nodes that are connected to
+// the "students" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithStudents(opts ...func(*StudentsQuery)) *UserQuery {
+	query := (&StudentsClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withStudents = query
+	return uq
+}
+
+// WithTeachers tells the query-builder to eager-load the nodes that are connected to
+// the "teachers" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithTeachers(opts ...func(*TeachersQuery)) *UserQuery {
+	query := (&TeachersClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withTeachers = query
+	return uq
+}
+
+// WithThesis tells the query-builder to eager-load the nodes that are connected to
+// the "thesis" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithThesis(opts ...func(*ThesisQuery)) *UserQuery {
+	query := (&ThesisClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withThesis = query
+	return uq
+}
+
+// WithReviews tells the query-builder to eager-load the nodes that are connected to
+// the "reviews" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithReviews(opts ...func(*ReviewsQuery)) *UserQuery {
+	query := (&ReviewsClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withReviews = query
+	return uq
+}
+
+// WithExamineThesis tells the query-builder to eager-load the nodes that are connected to
+// the "examineThesis" edge. The optional arguments are used to configure the query builder of the edge.
+func (uq *UserQuery) WithExamineThesis(opts ...func(*ThesisQuery)) *UserQuery {
+	query := (&ThesisClient{config: uq.config}).Query()
+	for _, opt := range opts {
+		opt(query)
+	}
+	uq.withExamineThesis = query
+	return uq
 }
 
 // GroupBy is used to group vertices by one or more fields/columns.
@@ -261,12 +477,12 @@ func (uq *UserQuery) Clone() *UserQuery {
 // Example:
 //
 //	var v []struct {
-//		Role int `json:"role,omitempty"`
+//		Account string `json:"account,omitempty"`
 //		Count int `json:"count,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		GroupBy(user.FieldRole).
+//		GroupBy(user.FieldAccount).
 //		Aggregate(ent.Count()).
 //		Scan(ctx, &v)
 func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
@@ -284,11 +500,11 @@ func (uq *UserQuery) GroupBy(field string, fields ...string) *UserGroupBy {
 // Example:
 //
 //	var v []struct {
-//		Role int `json:"role,omitempty"`
+//		Account string `json:"account,omitempty"`
 //	}
 //
 //	client.User.Query().
-//		Select(user.FieldRole).
+//		Select(user.FieldAccount).
 //		Scan(ctx, &v)
 func (uq *UserQuery) Select(fields ...string) *UserSelect {
 	uq.ctx.Fields = append(uq.ctx.Fields, fields...)
@@ -331,8 +547,16 @@ func (uq *UserQuery) prepareQuery(ctx context.Context) error {
 
 func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, error) {
 	var (
-		nodes = []*User{}
-		_spec = uq.querySpec()
+		nodes       = []*User{}
+		_spec       = uq.querySpec()
+		loadedTypes = [6]bool{
+			uq.withAdministrators != nil,
+			uq.withStudents != nil,
+			uq.withTeachers != nil,
+			uq.withThesis != nil,
+			uq.withReviews != nil,
+			uq.withExamineThesis != nil,
+		}
 	)
 	_spec.ScanValues = func(columns []string) ([]any, error) {
 		return (*User).scanValues(nil, columns)
@@ -340,6 +564,7 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	_spec.Assign = func(columns []string, values []any) error {
 		node := &User{config: uq.config}
 		nodes = append(nodes, node)
+		node.Edges.loadedTypes = loadedTypes
 		return node.assignValues(columns, values)
 	}
 	for i := range hooks {
@@ -351,7 +576,224 @@ func (uq *UserQuery) sqlAll(ctx context.Context, hooks ...queryHook) ([]*User, e
 	if len(nodes) == 0 {
 		return nodes, nil
 	}
+	if query := uq.withAdministrators; query != nil {
+		if err := uq.loadAdministrators(ctx, query, nodes, nil,
+			func(n *User, e *Administrators) { n.Edges.Administrators = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withStudents; query != nil {
+		if err := uq.loadStudents(ctx, query, nodes, nil,
+			func(n *User, e *Students) { n.Edges.Students = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withTeachers; query != nil {
+		if err := uq.loadTeachers(ctx, query, nodes, nil,
+			func(n *User, e *Teachers) { n.Edges.Teachers = e }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withThesis; query != nil {
+		if err := uq.loadThesis(ctx, query, nodes,
+			func(n *User) { n.Edges.Thesis = []*Thesis{} },
+			func(n *User, e *Thesis) { n.Edges.Thesis = append(n.Edges.Thesis, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withReviews; query != nil {
+		if err := uq.loadReviews(ctx, query, nodes,
+			func(n *User) { n.Edges.Reviews = []*Reviews{} },
+			func(n *User, e *Reviews) { n.Edges.Reviews = append(n.Edges.Reviews, e) }); err != nil {
+			return nil, err
+		}
+	}
+	if query := uq.withExamineThesis; query != nil {
+		if err := uq.loadExamineThesis(ctx, query, nodes,
+			func(n *User) { n.Edges.ExamineThesis = []*Thesis{} },
+			func(n *User, e *Thesis) { n.Edges.ExamineThesis = append(n.Edges.ExamineThesis, e) }); err != nil {
+			return nil, err
+		}
+	}
 	return nodes, nil
+}
+
+func (uq *UserQuery) loadAdministrators(ctx context.Context, query *AdministratorsQuery, nodes []*User, init func(*User), assign func(*User, *Administrators)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.Administrators(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.AdministratorsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_administrators
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_administrators" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_administrators" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadStudents(ctx context.Context, query *StudentsQuery, nodes []*User, init func(*User), assign func(*User, *Students)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.Students(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.StudentsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_students
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_students" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_students" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadTeachers(ctx context.Context, query *TeachersQuery, nodes []*User, init func(*User), assign func(*User, *Teachers)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+	}
+	query.withFKs = true
+	query.Where(predicate.Teachers(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.TeachersColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_teachers
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_teachers" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_teachers" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadThesis(ctx context.Context, query *ThesisQuery, nodes []*User, init func(*User), assign func(*User, *Thesis)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Thesis(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ThesisColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_thesis
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_thesis" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_thesis" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadReviews(ctx context.Context, query *ReviewsQuery, nodes []*User, init func(*User), assign func(*User, *Reviews)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Reviews(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ReviewsColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.user_reviews
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "user_reviews" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "user_reviews" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
+}
+func (uq *UserQuery) loadExamineThesis(ctx context.Context, query *ThesisQuery, nodes []*User, init func(*User), assign func(*User, *Thesis)) error {
+	fks := make([]driver.Value, 0, len(nodes))
+	nodeids := make(map[int]*User)
+	for i := range nodes {
+		fks = append(fks, nodes[i].ID)
+		nodeids[nodes[i].ID] = nodes[i]
+		if init != nil {
+			init(nodes[i])
+		}
+	}
+	query.withFKs = true
+	query.Where(predicate.Thesis(func(s *sql.Selector) {
+		s.Where(sql.InValues(s.C(user.ExamineThesisColumn), fks...))
+	}))
+	neighbors, err := query.All(ctx)
+	if err != nil {
+		return err
+	}
+	for _, n := range neighbors {
+		fk := n.thesis_examine
+		if fk == nil {
+			return fmt.Errorf(`foreign-key "thesis_examine" is nil for node %v`, n.ID)
+		}
+		node, ok := nodeids[*fk]
+		if !ok {
+			return fmt.Errorf(`unexpected referenced foreign-key "thesis_examine" returned %v for node %v`, *fk, n.ID)
+		}
+		assign(node, n)
+	}
+	return nil
 }
 
 func (uq *UserQuery) sqlCount(ctx context.Context) (int, error) {

@@ -1,17 +1,38 @@
 package routers
 
 import (
+	"github.com/ZEQUANR/zhulong/controller"
 	"github.com/gin-gonic/gin"
-	"github.com/shplume/zhulong/controller"
 )
 
-func Init(r *gin.Engine) {
-	v1 := r.Group("/api/v1")
+func Init(router *gin.Engine) {
 
-	test := v1.Group("/test")
-	test.GET("/ping", controller.Pong)
+	v1 := router.Group("/api/v1")
+	{
+		user := v1.Group("/user")
+		{
+			user.POST("/login", controller.UserLogin)
+			user.POST("/info", controller.UserInfo)
+			// user.POST("/editor", controller.UserEditor)
+			// user.POST("/register", controller.UserRegister)
+			user.POST("/logout", controller.UserLogout)
+		}
 
-	user := v1.Group("/user")
-	user.POST("/create", controller.CreateUser)
-	user.POST("/login", controller.UserLogin)
+		thesis := v1.Group("/thesis")
+		{
+			thesis.POST("/create", controller.ThesisCreate)
+			thesis.POST("/upload", controller.ThesisUpload)
+
+			thesis.POST("/allotList", controller.ThesisToBeReviewedList)
+			thesis.POST("/allocation", controller.ThesisAllocation)
+			thesis.POST("/reviewList", controller.ThesisUnderReviewList)
+			thesis.POST("/download", controller.ThesisDownload)
+			thesis.POST("/randomAllocation", controller.ThesisRandomAllocation)
+		}
+
+		review := v1.Group("/review")
+		{
+			review.POST("upload")
+		}
+	}
 }
